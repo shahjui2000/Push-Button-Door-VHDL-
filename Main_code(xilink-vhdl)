@@ -1,0 +1,169 @@
+----------------------------------------------------------------------------------
+-- Company: 
+-- Engineer: 
+-- 
+-- Create Date:    16:25:29 11/18/2019 
+-- Design Name: 
+-- Module Name:    keyp - Behavioral 
+-- Project Name: 
+-- Target Devices: 
+-- Tool versions: 
+-- Description: 
+--
+-- Dependencies: 
+--
+-- Revision: 
+-- Revision 0.01 - File Created
+-- Additional Comments: 
+--
+----------------------------------------------------------------------------------
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.numeric_std.ALL;
+
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--use IEEE.NUMERIC_STD.ALL;
+
+-- Uncomment the following library declaration if instantiating
+-- any Xilinx primitives in this code.
+--library UNISIM;;
+--use UNISIM.VComponents.all;
+
+entity scanner is
+port(R0, R1, R2, R3, CLK: in std_logic;
+C0, C1, C2: in std_logic;
+N0, N1, N2, N3, V: inout std_logic;
+lock: out std_logic:='1';
+dummy: out integer
+);
+end scanner;
+
+architecture behavioral of scanner is
+signal QA, K,Kd: std_logic;
+signal password: unsigned(31 downto 0) := "00000000000000000000000100010001";
+signal tmp: unsigned(31 downto 0) := "00000000000000000000000000000000";
+signal vec: unsigned(31 downto 0) := "00000000000000000000000000000000";
+signal state, nextstate: integer range 0 to 8;
+signal flag: std_logic_vector(1 downto 0) := "00";
+begin
+K <= R0 or R1 or R2 or R3; -- this is the decoder section
+N3 <= (R2 and not C0) or (R3 and not C1);
+N2 <= R1 or (R2 and C0);
+N1 <= (R0 and not C0) or (not R2 and C2) or (not R1 and not R0 and C0);
+N0 <= (R1 and C1) or (not R1 and C2) or (not R3 and not R1 and not C1);
+
+process(state, R0, R1, R2, R3, C0, C1, C2, K, Kd, QA)
+variable count : natural range 0 to 10 :=0;
+begin
+	--C0 <= '0'; C1 <= '0'; C2 <= '0';
+	V <= '0';
+	case state is
+		when 0 => dummy <= 0; nextstate <= 1; 
+		when 1 => --C0 <= '1'; C1 <= '1'; C2 <= '1';
+		dummy <= 1;
+		if (Kd and K) = '1' then nextstate <= 2;
+		else nextstate <= 1;
+		end if;
+		
+		when 2 => --C0 <= '1';
+		dummy <= 2;
+		if (Kd and K) = '1' then V <= '1'; nextstate <= 5;
+		elsif K = '0' then nextstate <= 3;
+		else nextstate <= 2;
+		end if;
+		
+		when 3 => --C1 <= '1';
+		dummy <= 3;
+		if (Kd and K) = '1' then V <= '1'; nextstate <= 5;
+		elsif K = '0' then nextstate <= 4;
+		else nextstate <= 3;
+		end if;
+		
+		when 4 => --C2 <= '1';
+		dummy <= 4;
+		if (Kd and K) = '1' then V <= '1'; nextstate <= 5;
+		else nextstate <= 4;
+		end if;
+			 
+		when 5 => --C0 <= '1'; C1 <= '1'; C2 <= '1';
+		
+		dummy <= 5;
+		--if Kd = '0' then nextstate <= 5; 
+		
+		--hash key 
+		if( N3='1' and N2='0' and N1='1' and N0='1') then 
+			--store mode
+			dummy <= to_integer(vec);
+			if(flag = "01") then tmp <= vec; nextstate <= 1; flag <= "10";  --password entered onetime 
+			dummy<= 11;
+			elsif( flag = "10" and vec = tmp) then --password entered second time and if correct
+				password <= tmp;
+				tmp <= "00000000000000000000000000000000";
+				nextstate <= 0;
+				flag <= "00";
+				dummy<= 12;
+			elsif(flag = "10") then  --password entered second time and if not correct
+				flag <= "01";
+				tmp <= "00000000000000000000000000000000";
+				nextstate <= 1;
+			--not store mode, goes to next state for checking unlock condition
+			 
+			else nextstate <= 6; count := 0 ;
+			end if;
+			
+		elsif( count>7) then nextstate <= 1;count :=0; vec <= "00000000000000000000000000000000";
+		
+		--checks for * to enter store mode
+		elsif( N3='1' and N2='0' and N1='1' and N0='0') then nextstate <= 1; flag <="01"; dummy<= 10;
+		
+		else 
+		
+		--dummy <= 3;
+		vec <= shift_left(vec,4);
+		if(N3 = '1') then
+			vec(3) <='1';
+		end if;
+		if(N2 = '1') then
+			vec(2) <='1';
+		end if;
+		if(N1 = '1') then
+			vec(1) <='1';
+		end if;
+		if(N0 = '1') then
+			vec(0) <='1';
+		end if;
+		count := count + 1;  nextstate <= 1; 
+		--dummy <= to_integer(vec);
+		end if;
+		--checks unlock condition
+		
+		when 6 => dummy <= 6;
+		if to_integer(password) = to_integer(vec) then nextstate<= 7 ; 
+		else nextstate<= 1 ;
+		--dummy <=7 when(password = vec) else dummy <= 1;
+		end if;
+		
+		--checks if hash key is still pressed; if so, door remains unlocked
+		
+		when 7 => dummy <=7;
+		if (Kd='1' and K='1') then nextstate <=7; lock<='0'; 
+		else nextstate <= 0; lock <='1';
+		end if;		
+		
+		when others => nextstate <= 0; lock<='1';
+	
+		end case;
+		end process;
+		
+		
+		process(CLK)
+		begin
+		if CLK = '1' and CLK'EVENT then
+		state <= nextstate;
+		QA <= K;
+		Kd <= QA;
+		end if;
+		end process;
+
+end behavioral;
