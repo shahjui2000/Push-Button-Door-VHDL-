@@ -1,6 +1,7 @@
-# Push-Button-Door-VHDL-
+# Push-Button-Door-VHDL
 Simulation of a push button door lock with a variable password.
 
+Runs on Xilinx_ISE_DS_Lin_14.7_1015_1
 
 **Design Strategy : Block Diagram**
 
