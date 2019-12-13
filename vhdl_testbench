@@ -1,0 +1,239 @@
+-------------------------------------------------------------------------------
+-- Company: 
+-- Engineer:
+--
+-- Create Date:   22:21:10 11/21/2019
+-- Design Name:   
+-- Module Name:   /home/jui/Desktop/el_pro/el/scanner_tb.vhd
+-- Project Name:  el
+-- Target Device:  
+-- Tool versions:  
+-- Description:   
+-- 
+-- VHDL Test Bench Created by ISE for module: scanner
+-- 
+-- Dependencies:
+-- 
+-- Revision:
+-- Revision 0.01 - File Created
+-- Additional Comments:
+--
+-- Notes: 
+-- This testbench has been automatically generated using types std_logic and
+-- std_logic_vector for the ports of the unit under test.  Xilinx recommends
+-- that these types always be used for the top-level I/O of a design in order
+-- to guarantee that the testbench will bind correctly to the post-implementation 
+-- simulation model.
+--------------------------------------------------------------------------------
+LIBRARY ieee;
+USE ieee.std_logic_1164.ALL;
+ 
+-- Uncomment the following library declaration if using
+-- arithmetic functions with Signed or Unsigned values
+--USE ieee.numeric_std.ALL;
+ 
+ENTITY scanner_tb IS
+END scanner_tb;
+ 
+ARCHITECTURE behavior OF scanner_tb IS 
+ 
+    -- Component Declaration for the Unit Under Test (UUT)
+ 
+    COMPONENT scanner
+    PORT(
+         R0 : IN  std_logic;
+         R1 : IN  std_logic;
+         R2 : IN  std_logic;
+         R3 : IN  std_logic;
+         CLK : IN  std_logic;
+         C0 : IN  std_logic;
+         C1 : IN  std_logic;
+         C2 : IN  std_logic;
+         N0 : INOUT  std_logic;
+         N1 : INOUT  std_logic;
+         N2 : INOUT  std_logic;
+         N3 : INOUT  std_logic;
+         V : INOUT  std_logic;
+         lock : OUT  std_logic;
+         dummy : OUT  integer
+        );
+    END COMPONENT;
+    
+
+   --Inputs
+   signal R0 : std_logic := '0';
+   signal R1 : std_logic := '0';
+   signal R2 : std_logic := '0';
+   signal R3 : std_logic := '0';
+   signal CLK : std_logic := '0';
+   signal C0 : std_logic := '0';
+   signal C1 : std_logic := '0';
+   signal C2 : std_logic := '0';
+
+	--BiDirs
+   signal N0 : std_logic;
+   signal N1 : std_logic;
+   signal N2 : std_logic;
+   signal N3 : std_logic;
+   signal V : std_logic;
+
+ 	--Outputs
+   signal lock : std_logic;
+   signal dummy : integer;
+
+   -- Clock period definitions
+   constant CLK_period : time := 10 ns;
+ 
+BEGIN
+ 
+	-- Instantiate the Unit Under Test (UUT)
+   uut: scanner PORT MAP (
+          R0 => R0,
+          R1 => R1,
+          R2 => R2,
+          R3 => R3,
+          CLK => CLK,
+          C0 => C0,
+          C1 => C1,
+          C2 => C2,
+          N0 => N0,
+          N1 => N1,
+          N2 => N2,
+          N3 => N3,
+          V => V,
+          lock => lock,
+          dummy => dummy		
+        );
+
+   -- Clock process definitions
+   CLK_process :process
+   begin
+		CLK <= '0';
+		wait for CLK_period/2;
+		CLK <= '1';
+		wait for CLK_period/2;
+   end process;
+ 
+
+   -- Stimulus process
+   stim_proc: process
+   begin		
+      -- hold reset state for 100 ns.
+      wait for 100 ns;	
+
+      wait for CLK_period*10;
+
+      -- insert stimulus here 
+
+		--------------------------
+		R0 <= '1';
+		R1 <= '0';
+		R2 <= '0';
+		R3 <= '0';
+		C0 <= '1';
+		C1 <= '0';
+		C2 <= '0';
+		wait for CLK_period*4;
+		
+		R0 <= '1';
+		R1 <= '0';
+		R2 <= '0';
+		R3 <= '0';
+		C0 <= '1';
+		C1 <= '0';
+		C2 <= '0';
+		wait for CLK_period*4;
+	
+		R0 <= '1';
+		R1 <= '0';
+		R2 <= '0';
+		R3 <= '0';
+		C0 <= '1';
+		C1 <= '0';
+		C2 <= '0';
+		wait for CLK_period*4;
+		
+		--hash
+		R0 <= '0';
+		R1 <= '0';
+		R2 <= '0';
+		R3 <= '1';
+		C0 <= '0';
+		C1 <= '0';
+		C2 <= '1';
+		wait for CLK_period*10;
+
+		--hash
+		R0 <= '0';
+		R1 <= '0';
+		R2 <= '0';
+		R3 <= '1';
+		C0 <= '0';
+		C1 <= '0';
+		C2 <= '1';
+		wait for CLK_period*10;
+		
+		--no key pressed
+		R0 <= '0';
+		R1 <= '0';
+		R2 <= '0';
+		R3 <= '0';
+		C0 <= '0';
+		C1 <= '0';
+		C2 <= '0';
+		wait for CLK_period*10;
+		
+--		--star pressed
+--		R0 <= '0';
+--		R1 <= '0';
+--		R2 <= '0';
+--		R3 <= '1';
+--		C0 <= '1';
+--		C1 <= '0';
+--		C2 <= '0';
+--		wait for CLK_period*4;
+--		
+--		--hash1
+--		R0 <= '0';
+--		R1 <= '0';
+--		R2 <= '0';
+--		R3 <= '1';
+--		C0 <= '0';
+--		C1 <= '0';
+--		C2 <= '1';
+--		wait for CLK_period*10;
+--		
+--		--hash2
+--		R0 <= '0';
+--		R1 <= '0';
+--		R2 <= '0';
+--		R3 <= '1';
+--		C0 <= '0';
+--		C1 <= '0';
+--		C2 <= '1';
+--		wait for CLK_period*10;
+--		
+--		--no key pressed
+--		R0 <= '0';
+--		R1 <= '0';
+--		R2 <= '0';
+--		R3 <= '0';
+--		C0 <= '0';
+--		C1 <= '0';
+--		C2 <= '0';
+--		wait for CLK_period*10;
+--		
+--		--hash
+--		R0 <= '0';
+--		R1 <= '0';
+--		R2 <= '0';
+--		R3 <= '1';
+--		C0 <= '0';
+--		C1 <= '0';
+--		C2 <= '1';
+--		wait for CLK_period*10;
+		
+      wait;
+   end process;
+
+END;
