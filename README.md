@@ -2,7 +2,7 @@
 Simulation of a push button door lock with a variable password.
 
 
-**Design Strategy : Block Diagram **
+**Design Strategy : Block Diagram**
 
 ![Block Diagram](https://github.com/shahjui2000/Push-Button-Door-VHDL-/blob/master/el_strategy.jpg)
 
