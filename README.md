@@ -10,10 +10,15 @@ Simulation of a push button door lock with a variable password.
 **Modules:**
 
 1.Keypad Scanner
+
 2.Decoder (Decoding which key is pressed from input row and column
+
 3.Debouncer( For taking care of multiple pressing of a single key)
+
 4.Store Module (For Password Reset)
+
 5.Lock-Unlock state module (Main Logic of Push-Button Door)
+
 6.Display: Shown by LED or a bit(0 or 1 for Locked and Unlocked states respectively)
 
 **FSM : Lock and Unlock Logic of Door**
